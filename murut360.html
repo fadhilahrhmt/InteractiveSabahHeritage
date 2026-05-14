@@ -37,7 +37,7 @@
     .tl { top: -1px; left: -1px; border-right: 0; border-bottom: 0; }
     .br { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
 
-    /* --- GALLERY-STYLE NAV BAR --- */
+    /* --- NAV BAR --- */
     .site-header {
       height: 80px;
       display: grid;
@@ -53,67 +53,45 @@
     .nav-meta-left { font-size: 9px; letter-spacing: 2px; opacity: 0.6; text-transform: uppercase; }
     .main-nav { display: flex; gap: 5px; }
     .nav-btn {
-      color: #fff;
-      text-decoration: none;
-      padding: 8px 15px;
-      font-size: 11px;
-      font-weight: bold;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      transition: 0.3s;
+      color: #fff; text-decoration: none; padding: 8px 15px; font-size: 11px;
+      font-weight: bold; text-transform: uppercase; letter-spacing: 2px; transition: 0.3s;
     }
     .nav-btn:hover, .nav-btn.active { color: var(--accent); text-shadow: 0 0 8px var(--accent); }
     .nav-right-controls { justify-self: end; font-size: 10px; color: var(--accent); border: 1px solid var(--accent); padding: 5px 12px; }
 
-    /* --- FADED PATTERN GALLERY (No Glitch) --- */
-    .pattern-archive-label {
-      font-size: 0.6rem;
-      color: var(--accent);
-      margin-bottom: 10px;
-      letter-spacing: 2px;
-    }
-
+    /* --- IMPROVED PATTERN GALLERY --- */
     .pattern-scroll-container {
       width: 100%;
       overflow-x: auto;
-      overflow-y: hidden;
       white-space: nowrap;
-      padding-bottom: 10px;
-      /* Horizontal Fade Mask */
-      mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+      padding: 10px 0;
+      /* Masking both sides for a "fade-in" effect */
+      mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+      -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
     }
-
-    /* Hide scrollbar but keep functionality */
     .pattern-scroll-container::-webkit-scrollbar { display: none; }
 
     .pattern-item {
       display: inline-block;
-      width: 140px;
-      height: 180px;
+      width: 120px;
+      height: 150px;
       margin-right: 15px;
       position: relative;
       border: 1px solid var(--ui-border);
       background: #111;
       overflow: hidden;
-      /* Vertical Fade-in Mask (Bottom to Top) */
-      mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
-      -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+      /* Fixed: Masking no longer hides the entire image */
+      mask-image: linear-gradient(to top, black 80%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to top, black 80%, transparent 100%);
     }
 
     .pattern-img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      opacity: 0.6;
-      filter: grayscale(1);
-      transition: 0.8s cubic-bezier(0.2, 1, 0.3, 1);
+      width: 100%; height: 100%; object-fit: cover;
+      opacity: 0.5; filter: grayscale(1);
+      transition: 0.6s ease-in-out;
     }
 
-    .pattern-item:hover .pattern-img {
-      opacity: 1;
-      filter: grayscale(0);
-      transform: scale(1.1);
-    }
+    .pattern-item:hover .pattern-img { opacity: 1; filter: grayscale(0); transform: scale(1.1); }
 
     /* --- VIEWPORT GRID --- */
     .viewer-container {
@@ -132,7 +110,6 @@
       flex-direction: column; 
       justify-content: space-between;
       backdrop-filter: blur(10px);
-      pointer-events: auto;
     }
 
     .panel-header { font-size: 0.6rem; color: var(--accent); border-bottom: 1px solid var(--ui-border); padding-bottom: 8px; margin-bottom: 15px; letter-spacing: 3px; }
@@ -143,14 +120,15 @@
       text-align: center; text-decoration: none; margin-bottom: 10px; transition: 0.3s;
     }
     .terminal-btn:hover { background: var(--accent); color: #000; box-shadow: 0 0 10px var(--accent); }
+    .terminal-btn.active { background: rgba(212, 175, 55, 0.2); }
 
     .model-stage { 
       position: relative; 
       border: 1px solid var(--ui-border);
-      background: radial-gradient(circle, rgba(212, 175, 55, 0.05) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(212, 175, 55, 0.08) 0%, transparent 75%);
     }
     #realModelCanvas { width: 100% !important; height: 100% !important; }
-    .status-overlay { position: absolute; bottom: 15px; left: 15px; font-size: 0.55rem; color: var(--accent); }
+    .status-overlay { position: absolute; bottom: 15px; left: 15px; font-size: 0.55rem; color: var(--accent); text-transform: uppercase; }
 
   </style>
 </head>
@@ -159,7 +137,7 @@
   <div class="hud-frame"><div class="hud-corner tl"></div><div class="hud-corner br"></div></div>
 
   <header class="site-header">
-    <div class="nav-meta-left">ARCHIVE_SYNC // KADAZAN_01</div>
+    <div class="nav-meta-left">ARCHIVE_SYNC // MURUT_02</div>
     <nav class="main-nav">
       <a href="index.html" class="nav-btn">HOME</a>
       <a href="explore.html" class="nav-btn">EXPLORE</a>
@@ -183,36 +161,31 @@
 
     <section class="model-stage" id="stageContainer">
       <canvas id="realModelCanvas"></canvas>
-      <div class="status-overlay">RENDER_MODE: <span id="modelStatus">IDLE</span></div>
+      <div class="status-overlay">RENDER_MODE: <span id="modelStatus">SYNCING...</span></div>
     </section>
 
     <aside class="panel">
       <div>
         <div class="panel-header">ASSET_METADATA</div>
         
-        <div class="pattern-archive-label">TEXTILE_PATTERNS // SCAN_04</div>
-        
         <div class="pattern-scroll-container">
           <div class="pattern-item">
-            <img src= "https://thumbs.dreamstime.com/b/colorful-murut-beading-work-display-48704402.jpg" class="pattern-img">
+            <img src="https://thumbs.dreamstime.com/b/colorful-murut-beading-work-display-48704402.jpg" class="pattern-img">
           </div>
           <div class="pattern-item">
-            <img src = "https://thumbs.dreamstime.com/b/colorful-murut-beading-work-display-48704402.jpg" class="pattern-img">
+            <img src="https://thumbs.dreamstime.com/b/colorful-murut-beading-work-display-48704402.jpg" class="pattern-img">
           </div>
           <div class="pattern-item">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_EXAMPLE_PATTERN_3" class="pattern-img">
-          </div>
-          <div class="pattern-item">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_EXAMPLE_PATTERN_4" class="pattern-img">
+            <img src="https://i.pinimg.com/originals/91/92/7d/91927d6d5333f8e583c9217e7161b96a.jpg" class="pattern-img">
           </div>
         </div>
 
-        <h2 style="font-family: 'Cinzel'; color: var(--accent); font-size: 1.2rem; margin-top: 15px;">SINIKOT</h2>
-        <p style="font-size: 0.6rem; color: var(--text-dim); margin-top:10px; line-height: 1.8; text-transform: uppercase;">
-          ARCHIVAL TEXTILE ANALYSIS:<br>
-          Hand-woven gold embroidery.<br>
-          Ceremonial velvet base.<br>
-          Ancient Kadazan geometry detected.
+        <h2 style="font-family: 'Cinzel'; color: var(--accent); font-size: 1.2rem; margin-top: 20px;">SINIKOT</h2>
+        <p style="font-size: 0.65rem; color: var(--text-dim); margin-top:10px; line-height: 1.8; text-transform: uppercase;">
+          <strong style="color: var(--accent);">SCAN_RESULTS:</strong><br>
+          Hand-stitched beadwork details.<br>
+          Distinct Murut motif geometry.<br>
+          High-density tribal patterns detected.
         </p>
       </div>
       <a href="index.html" class="terminal-btn">EXIT_ARCHIVE</a>
@@ -230,35 +203,46 @@
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(45, stage.clientWidth / stage.clientHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+    renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(stage.clientWidth, stage.clientHeight);
 
-    scene.add(new THREE.AmbientLight(0xffffff, 0.8));
-    const pointLight = new THREE.PointLight(0xd4af37, 1);
+    // Improved Lighting for better metallic look
+    scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+    const pointLight = new THREE.PointLight(0xd4af37, 2);
     pointLight.position.set(5, 5, 5);
     scene.add(pointLight);
 
     const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
     camera.position.set(0, 0, 3);
 
-    // Placeholder object for demonstration
-    const geometry = new THREE.TorusKnotGeometry(0.5, 0.2, 100, 16);
-    const material = new THREE.MeshStandardMaterial({ color: 0xd4af37, wireframe: true });
+    // Murut Geometry (TorusKnot with wireframe for tech feel)
+    const geometry = new THREE.TorusKnotGeometry(0.5, 0.18, 150, 20);
+    const material = new THREE.MeshStandardMaterial({ 
+      color: 0xd4af37, 
+      wireframe: true,
+      emissive: 0xd4af37,
+      emissiveIntensity: 0.2
+    });
     const mesh = new THREE.Mesh(geometry, material);
     scene.add(mesh);
     status.innerText = "STABLE";
 
     function animate() {
       requestAnimationFrame(animate);
-      mesh.rotation.y += 0.005;
+      mesh.rotation.y += 0.003;
+      mesh.rotation.z += 0.001;
       controls.update();
       renderer.render(scene, camera);
     }
     animate();
 
     window.addEventListener('resize', () => {
-      camera.aspect = stage.clientWidth / stage.clientHeight;
+      const width = stage.clientWidth;
+      const height = stage.clientHeight;
+      camera.aspect = width / height;
       camera.updateProjectionMatrix();
-      renderer.setSize(stage.clientWidth, stage.clientHeight);
+      renderer.setSize(width, height);
     });
 
     document.getElementById('resetCamera').onclick = () => { controls.reset(); };
